@@ -2,3 +2,5 @@
 DGP's Mobile application
 
 `contribution by softyware21`
+
+## Structure
