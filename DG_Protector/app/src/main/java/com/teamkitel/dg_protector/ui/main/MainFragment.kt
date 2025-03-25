@@ -280,10 +280,9 @@ class MainFragment : Fragment() {
             }
             val selectedMode = binding.spinnerMode.selectedItem.toString()
             if (selectedMode == "사용자 설정") {
-                // 사용자 설정 모드인 경우 좌/우 압력 값을 포함하는 명령 생성
-                val leftValue = binding.leftNumberPicker.value
-                val rightValue = binding.rightNumberPicker.value
-                val command = "L:$leftValue,R:$rightValue\n"
+                val leftValue: Int = binding.leftNumberPicker.value
+                val rightValue: Int = binding.rightNumberPicker.value
+                val command = "${'U'} ${leftValue}${','}${rightValue}${'.'}\n"
                 try {
                     bluetoothSocket?.outputStream?.write(command.toByteArray())
                     Toast.makeText(requireContext(), "동기화 명령 전송 완료", Toast.LENGTH_SHORT).show()
@@ -292,10 +291,10 @@ class MainFragment : Fragment() {
                     Toast.makeText(requireContext(), "전송 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                // 현재 사용중인 프로필에서 성별 값을 불러옴 (기본값을 "남"으로 설정함)
-                // 이전에 gender 설정 부분을 (X, 남, 여)에서 (남, 여)로 바꿨기 때문에 '남' or '여' 밖에 없음.
+                // 약, 중, 강 모드의 경우:
+                // 현재 사용중인 프로필의 gender 값을 확인하여 '남'일때 (L, M, H),
+                // '여'일때 (l, m, h) 형태로 명령 전송
                 val currentGender = currentProfile?.gender ?: "남"
-                // 약, 중, 강 모드와 성별에 따라 각각 남(L, M, H) 또는 여(l, m, h)를 전송
                 val command = when (selectedMode) {
                     "약" -> if (currentGender == "남") "L\n" else "l\n"
                     "중" -> if (currentGender == "남") "M\n" else "m\n"
@@ -311,6 +310,7 @@ class MainFragment : Fragment() {
                 }
             }
         }
+
 
         // Bluetooth 버튼의 색상 업데이트 (Bluetooth 활성화 여부에 따라 다름)
         updateBluetoothButtonTint()

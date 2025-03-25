@@ -7,8 +7,9 @@ DGP's Mobile application
 '25.03.25.v2.1 | MainFragment, Sending values according to mode edit.
 약 → L | 중 → M | 강 → H'
 
-'25.03.25.v2.2 | MainFragment' Sending values according to profile gender.
+'25.03.25.v2.2 | MainFragment, Sending values according to profile gender.
 남 → 약: L | 중: M | 강: H
-여 → 약: l | 중: m | 강: h
+여 → 약: l | 중: m | 강: h'
 
-## Structure
+'25.03.25.v2.3 | MainFragment, When seletedmode is '사용자 설정' sending value.
+사용자 설정 → U (LeftValue), (RightValue).'
