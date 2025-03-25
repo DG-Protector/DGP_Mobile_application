@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="16dp"
+    android:background="@drawable/btn_round"
+    android:backgroundTint="@color/white"
+    android:elevation="3dp"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:src="@drawable/ic_account_black_24dp"
+        android:tint="@color/kitel_navy_700" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:textAlignment="center">
+
+        <TextView
+            android:id="@+id/new_profile_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="USER1"
+            android:textAlignment="center"
+            android:textColor="@color/kitel_navy_700"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_text_profile_usage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="오늘 사용한 시간: 00:00:00"
+            android:textAlignment="center"
+            android:textColor="@color/kitel_navy_700"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/item_text_profile_last_usage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="마지막 사용: 00 hour ago"
+            android:textAlignment="center"
+            android:textColor="@color/kitel_navy_0_act"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+</LinearLayout>

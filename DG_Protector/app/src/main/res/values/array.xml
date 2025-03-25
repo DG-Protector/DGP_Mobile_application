@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gender_list">
+        <item>남</item>
+        <item>여</item>
+    </string-array>
+
+    <string-array name="mode_list">
+        <item>사용자 설정</item>
+        <item>약</item>
+        <item>중</item>
+        <item>강</item>
+    </string-array>
+</resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_main">
+
+    <fragment
+        android:id="@+id/navigation_statistics"
+        android:name="com.teamkitel.dg_protector.ui.statistics.StatisticsFragment"
+        android:label="@string/title_statistics"
+        tools:layout="@layout/layout_statistics" >
+        <action
+            android:id="@+id/action_navigation_statistics_to_navigation_main3"
+            app:destination="@id/navigation_main" />
+        <action
+            android:id="@+id/action_navigation_statistics_to_navigation_user_information2"
+            app:destination="@id/navigation_user_information" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_main"
+        android:name="com.teamkitel.dg_protector.ui.main.MainFragment"
+        android:label="@string/title_main"
+        tools:layout="@layout/layout_main" >
+        <action
+            android:id="@+id/action_navigation_main_to_navigation_statistics2"
+            app:destination="@id/navigation_statistics" />
+        <action
+            android:id="@+id/action_navigation_main_to_navigation_user_information3"
+            app:destination="@id/navigation_user_information" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_user_information"
+        android:name="com.teamkitel.dg_protector.ui.user_information.UserInformationFragment"
+        android:label="@string/title_user_information"
+        tools:layout="@layout/layout_user_information" >
+        <action
+            android:id="@+id/action_navigation_user_information_to_navigation_main3"
+            app:destination="@id/navigation_main" />
+        <action
+            android:id="@+id/action_navigation_user_information_to_navigation_statistics2"
+            app:destination="@id/navigation_statistics" />
+    </fragment>
+
+</navigation>

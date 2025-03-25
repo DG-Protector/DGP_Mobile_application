@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="kitel_navy_200">#FF3200FF</color>
+    <color name="kitel_navy_500">#FF19008C</color>
+    <color name="kitel_navy_700">#FF0A0046</color>
+    <color name="teal_200">#FFb2a6ff</color>
+    <color name="teal_700">#FF7e69ff</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="default_white">#FFFAFA</color>
+    <color name="kitel_navy_0_act">#767691</color>
+    <color name="kitel_navy_0">#B2B2E3</color>
+    <color name="grey">#C0C0C0</color>
+    <color name="light_grey">#E0E0E0</color>
+</resources>
