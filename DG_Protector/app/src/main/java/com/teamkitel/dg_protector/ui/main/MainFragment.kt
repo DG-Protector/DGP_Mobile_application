@@ -292,11 +292,14 @@ class MainFragment : Fragment() {
                     Toast.makeText(requireContext(), "전송 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                // 약, 중, 강 모드에 따라 각각 L, M, H를 전송하도록 변경함
+                // 현재 사용중인 프로필에서 성별 값을 불러옴 (기본값을 "남"으로 설정함)
+                // 이전에 gender 설정 부분을 (X, 남, 여)에서 (남, 여)로 바꿨기 때문에 '남' or '여' 밖에 없음.
+                val currentGender = currentProfile?.gender ?: "남"
+                // 약, 중, 강 모드와 성별에 따라 각각 남(L, M, H) 또는 여(l, m, h)를 전송
                 val command = when (selectedMode) {
-                    "약" -> "L\n"
-                    "중" -> "M\n"
-                    "강" -> "H\n"
+                    "약" -> if (currentGender == "남") "L\n" else "l\n"
+                    "중" -> if (currentGender == "남") "M\n" else "m\n"
+                    "강" -> if (currentGender == "남") "H\n" else "h\n"
                     else -> "$selectedMode\n"
                 }
                 try {
@@ -308,9 +311,6 @@ class MainFragment : Fragment() {
                 }
             }
         }
-
-
-
 
         // Bluetooth 버튼의 색상 업데이트 (Bluetooth 활성화 여부에 따라 다름)
         updateBluetoothButtonTint()
