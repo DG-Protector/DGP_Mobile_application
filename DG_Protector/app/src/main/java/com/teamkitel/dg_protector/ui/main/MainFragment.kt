@@ -292,8 +292,13 @@ class MainFragment : Fragment() {
                     Toast.makeText(requireContext(), "전송 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                // 사용자 설정 외 다른 모드인 경우 모드 이름(약, 중, 강)을 전송
-                val command = "$selectedMode\n"
+                // 약, 중, 강 모드에 따라 각각 L, M, H를 전송하도록 변경함
+                val command = when (selectedMode) {
+                    "약" -> "L\n"
+                    "중" -> "M\n"
+                    "강" -> "H\n"
+                    else -> "$selectedMode\n"
+                }
                 try {
                     bluetoothSocket?.outputStream?.write(command.toByteArray())
                     Toast.makeText(requireContext(), "$selectedMode 모드 명령 전송 완료", Toast.LENGTH_SHORT).show()
@@ -303,6 +308,9 @@ class MainFragment : Fragment() {
                 }
             }
         }
+
+
+
 
         // Bluetooth 버튼의 색상 업데이트 (Bluetooth 활성화 여부에 따라 다름)
         updateBluetoothButtonTint()
