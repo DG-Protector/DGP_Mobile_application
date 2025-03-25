@@ -311,7 +311,6 @@ class MainFragment : Fragment() {
             }
         }
 
-
         // Bluetooth 버튼의 색상 업데이트 (Bluetooth 활성화 여부에 따라 다름)
         updateBluetoothButtonTint()
         // 현재 선택된 프로필 재로드 (필요 시 UI 업데이트)
@@ -443,19 +442,22 @@ class MainFragment : Fragment() {
             } else {
                 emptySet()
             }
-        // 모든 장치를 합침 (페어링된 장치 + 검색된 장치)
+        // Unknown Device는 필터링함.
+        // 모든 장치 (등록된 장치 + 검색된 장치)만 검색됨
         val allDevices = mutableSetOf<BluetoothDevice>()
-        allDevices.addAll(pairedDevices)
-        allDevices.addAll(discoveredDevices)
+        allDevices.addAll(pairedDevices.filter { it.name != null && it.name.isNotEmpty() })
+        allDevices.addAll(discoveredDevices.filter { it.name != null && it.name.isNotEmpty() })
+
         if (allDevices.isEmpty()) {
             Toast.makeText(requireContext(), "No Bluetooth devices found.", Toast.LENGTH_SHORT).show()
             return
         }
+
         // 장치 이름 및 주소 표시 (등록된 기기의 경우 "(Registered)" 표시)
         val deviceNames = allDevices.map { device ->
             val name = try {
                 if (hasBluetoothConnectPermission()) {
-                    device.name ?: "Unknown Device"
+                    device.name  // 이름이 null이 아닌 디바이스만 표시
                 } else {
                     "Permission not granted"
                 }
@@ -465,6 +467,7 @@ class MainFragment : Fragment() {
             if (pairedDevices.contains(device)) "$name (Registered)\n${device.address}"
             else "$name\n${device.address}"
         }.toTypedArray()
+
         // AlertDialog 생성: 장치 목록 중 선택할 수 있도록 함
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Select Bluetooth Device")

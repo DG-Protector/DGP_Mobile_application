@@ -13,3 +13,5 @@ DGP's Mobile application
 
 '25.03.25.v2.3 | MainFragment, When seletedmode is '사용자 설정' sending value.
 사용자 설정 → U (LeftValue), (RightValue).'
+
+'25.03.25.v3.1 | MainFragment, When Bluetooth searches near device, Filtering unknown device(Device name is null)'
