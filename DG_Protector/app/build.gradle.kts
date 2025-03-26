@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.kapt") // Add kapt plugin
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -51,13 +51,14 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-
-    // Add Room library
-    implementation("androidx.room:room-runtime:2.4.3")
-    implementation("androidx.room:room-ktx:2.4.3")
-    kapt("androidx.room:room-compiler:2.4.3")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+kapt {
+    correctErrorTypes = true
 }

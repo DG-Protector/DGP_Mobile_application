@@ -330,6 +330,7 @@ class MainFragment : Fragment() {
     }
 
     // SharedPreferences에서 프로필을 로드하여 UI에 반영
+    // 기존 loadSelectedProfile() 함수 수정 (타이머 UI 업데이트 추가)
     private fun loadSelectedProfile() {
         val prefs = requireContext().getSharedPreferences("selectedProfile", MODE_PRIVATE)
         val profileJson = prefs.getString("selectedProfileJson", null)
@@ -337,11 +338,14 @@ class MainFragment : Fragment() {
             val loadedProfile = Gson().fromJson(profileJson, ProfileData::class.java)
             currentProfile = loadedProfile
             binding.textUserName.text = currentProfile?.name ?: "USER1"
-            // 프로필 변경 시 TimerService는 공유 저장소의 현재 선택된 프로필을 사용합니다.
+            // 프로필에 저장된 사용 시간으로 타이머 텍스트 업데이트
+            binding.timerTextView.text = "사용한 시간: ${formatSecondsToHMS(currentProfile?.usedTimeSeconds ?: 0)}"
         } else {
             binding.textUserName.text = "USER1"
+            binding.timerTextView.text = "사용한 시간: 00:00:00"
         }
     }
+
 
     // 오늘 날짜를 키로 사용해 사용 시간을 저장 (예: "yyyy-MM-dd" 형식) TimerServiec에서 다른 레이아웃 or 앱이 백그라운드에 있을 때 시간을 저장할 곳이 필요하므로 저장이 필요함
     private fun saveUsageTimeForToday(usedSeconds: Int) {
