@@ -22,3 +22,6 @@ DGP's Mobile application
 
 '25.03.27.v1.1 | Main, Bluetooth pairing time'
 'Error that all profiles share the timer in main layout is solved.'
+
+'25.03.27.v2.1 | Statistics'
+'In Statistics, Add Using time graph.'
