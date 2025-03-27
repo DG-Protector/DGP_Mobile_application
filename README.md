@@ -19,3 +19,6 @@ DGP's Mobile application
 '25.03.26.v1.1 | Using time statistics'
 'First, It's displayed Using time for testing as text.'
 'Using time is stored individually according to the profile.'
+
+'25.03.27.v1.1 | Main, Bluetooth pairing time'
+'Error that all profiles share the timer in main layout is solved.'

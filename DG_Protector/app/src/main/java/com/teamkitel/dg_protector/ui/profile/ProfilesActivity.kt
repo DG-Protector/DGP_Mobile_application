@@ -135,16 +135,21 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
                     gson.fromJson(existingJson, ProfileData::class.java)
                 } else null
 
-                // 기존에 선택된 프로필과 동일하면 사용시간 유지, 아니면 새 프로필 사용
+                // 기존에 선택된 프로필과 동일하면 기존 사용시간 유지, 아니면 새로 선택된 프로필 사용
                 val selectedProfile = if (existingProfile != null && existingProfile.id == profile.id) {
                     profile.copy(
                         usedTimeSeconds = existingProfile.usedTimeSeconds,
                         lastUsedTimestamp = existingProfile.lastUsedTimestamp
                     )
                 } else {
-                    profile
+                    // 새 프로필 선택 시, 사용 시간을 0으로 초기화
+                    profile.copy(
+                        usedTimeSeconds = 0,
+                        lastUsedTimestamp = 0L
+                    )
                 }
 
+                // 선택된 프로필 정보를 SharedPreferences에 저장
                 prefs.edit().putString("selectedProfileJson", gson.toJson(selectedProfile)).apply()
                 Toast.makeText(this, "선택된 프로필: ${selectedProfile.name}", Toast.LENGTH_SHORT).show()
 

@@ -21,7 +21,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Space
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -36,61 +35,51 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-// 메인 화면의 UI와 Bluetooth 연결, 타이머 서비스 및 사용자 프로필 관리 기능을 담당하는 Class
-
 class MainFragment : Fragment() {
 
-    // ViewBinding을 사용하여 layout_main.xml과 연결
+    // ViewBinding
     private var _binding: LayoutMainBinding? = null
     private val binding get() = _binding!!
 
-    // UI 상태를 관리하기 위한 ViewModel
+    // ViewModel 및 Bluetooth 관련 변수들
     private lateinit var mainViewModel: MainViewModel
-    // Bluetooth 관련 변수들
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private var bluetoothSocket: BluetoothSocket? = null
-    // 진행 상황을 보여주기 위한 ProgressDialog (블루투스 검색/연결 시 사용됨)
     private var progressDialog: ProgressDialog? = null
 
-    // 현재 선택된 프로필 데이터 (JSON 형식으로 SharedPreferences에 저장된 프로필)
+    // 현재 선택된 프로필 데이터 및 이전 프로필 id
     private var currentProfile: ProfileData? = null
-    // 이전에 로드한 프로필 id (프로필 변경 감지)
     private var previousProfileId: String? = null
 
-    // Bluetooth 연결 상태를 주기적으로 확인하기 위한 Handler와 Runnable
+    // Bluetooth 연결 상태 모니터링을 위한 Handler와 Runnable
     private val connectionHandler = Handler(Looper.getMainLooper())
     private val connectionMonitor = object : Runnable {
         override fun run() {
-            // Bluetooth 소켓이 연결되지 않았으면 TimerService를 중지함
             if (bluetoothSocket == null || !bluetoothSocket!!.isConnected) {
                 val serviceIntent = Intent(requireContext(), TimerService::class.java)
                 requireContext().stopService(serviceIntent)
                 Log.d("MainFragment", "Bluetooth 연결 끊김 감지 - TimerService stopped")
             }
-            // 1초마다 업데이트
             connectionHandler.postDelayed(this, 1000)
         }
     }
 
-    // 실제로 BOND_BONDED 상태(=Bluetooth가 연결된 상태)일 때 Bluetooth가 '페어링'된 것으로 간주하는 변수
+    // 실제 페어링 상태 변수
     private var isPaired: Boolean = false
 
     companion object {
-        // Bluetooth 활성화 요청 및 권한 요청 시 사용하는 상수
         private const val REQUEST_ENABLE_BT = 1
         private const val REQUEST_CODE_PERMISSIONS = 101
-        // Bluetooth SPP (Serial Port Profile) UUID
         private val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     }
 
-    // Bluetooth 상태 변경을 모니터링하는 BroadcastReceiver (Bluetooth on/off 상태에 따른 UI 업데이트 및 서비스 중지)
+    // Bluetooth 상태 변경 BroadcastReceiver
     private val bluetoothStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (BluetoothAdapter.ACTION_STATE_CHANGED == intent.action) {
                 val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
                 when (state) {
                     BluetoothAdapter.STATE_OFF -> {
-                        // Bluetooth가 꺼지면 버튼 색상 회색으로 업데이트, 페어링 상태 초기화, 타이머 서비스 중지
                         updateBluetoothButtonTint()
                         isPaired = false
                         val serviceIntent = Intent(requireContext(), TimerService::class.java)
@@ -102,11 +91,10 @@ class MainFragment : Fragment() {
         }
     }
 
-    // Bluetooth 장치 검색 관련 BroadcastReceiver
+    // Bluetooth 장치 검색 BroadcastReceiver
     private val discoveryReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                // 새로운 장치를 찾으면 discoveredDevices 리스트에 추가
                 BluetoothDevice.ACTION_FOUND -> {
                     val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     device?.let {
@@ -115,7 +103,6 @@ class MainFragment : Fragment() {
                         }
                     }
                 }
-                // 검색 완료 시 등록된 Receiver 해제, ProgressDialog 종료, 검색 결과를 다이얼로그로 표시
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                     requireContext().unregisterReceiver(this)
                     progressDialog?.dismiss()
@@ -124,10 +111,9 @@ class MainFragment : Fragment() {
             }
         }
     }
-    // 검색된 Bluetooth 장치를 저장하는 리스트
     private val discoveredDevices = mutableListOf<BluetoothDevice>()
 
-    // BLUETOOTH_CONNECT 권한이 있는지 확인하는 함수
+    // BLUETOOTH_CONNECT 권한 확인 함수
     private fun hasBluetoothConnectPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             requireContext(),
@@ -135,7 +121,7 @@ class MainFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    // TimerService에서 방송하는 타이머 틱 이벤트를 수신하여 UI와 ViewModel 업데이트
+    // TimerService의 타이머 틱 이벤트 수신 BroadcastReceiver
     private val timerTickReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val seconds = intent?.getIntExtra("elapsedSeconds", 0) ?: 0
@@ -145,25 +131,20 @@ class MainFragment : Fragment() {
         }
     }
 
-    // Fragment가 화면에 나타나기 전에 필요한 권한을 확인 및 요청
     override fun onStart() {
         super.onStart()
         val permissionsNeeded = mutableListOf<String>()
-        // BLUETOOTH_SCAN 권한 확인
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN)
             != PackageManager.PERMISSION_GRANTED) {
             permissionsNeeded.add(Manifest.permission.BLUETOOTH_SCAN)
         }
-        // 위치 권한 확인 (Bluetooth 스캔에 필요)
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
-        // BLUETOOTH_CONNECT 권한 확인
         if (!hasBluetoothConnectPermission()) {
             permissionsNeeded.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
-        // 필요한 권한이 있으면 AlertDialog를 통해 사용자에게 요청
         if (permissionsNeeded.isNotEmpty()) {
             AlertDialog.Builder(requireContext())
                 .setTitle("권한 필요")
@@ -176,13 +157,12 @@ class MainFragment : Fragment() {
         }
     }
 
-    // Fragment 생성 시 ViewModel 초기화
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        // ViewModel은 Activity 범위로 가져와 프로세스가 살아있을 때 값을 유지합니다.
+        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
     }
 
-    // View 생성 및 초기화: layout inflate, UI 컴포넌트 초기 설정, Bluetooth 초기화, 프로필 로드 등
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -191,31 +171,29 @@ class MainFragment : Fragment() {
         _binding = LayoutMainBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Bluetooth 초기화 및 현재 선택된 프로필 로드
         initializeBluetooth()
-        loadSelectedProfile()
+        loadSelectedProfile() // 프로필과 타이머 값을 불러옴
 
-        // NumberPicker 설정 (좌우 압력 조절)
+        // ViewModel의 타이머 값이 0인 경우(즉, 새 프로세스에서 처음 시작된 경우)만 세션 타이머를 초기화합니다.
+        if (mainViewModel.elapsedSeconds.value == 0) {
+            resetSessionTimer()
+        }
+
+        // NumberPicker 설정
         val stepArr = arrayOf("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
         val max = stepArr.size - 1
         val min = 0
-        val defaultPressure = 5
 
         binding.leftNumberPicker.maxValue = max
         binding.rightNumberPicker.maxValue = max
         binding.leftNumberPicker.minValue = min
         binding.rightNumberPicker.minValue = min
 
-        // 기본 압력 값 설정 (ViewModel에 저장된 값이 없으면 defaultPressure 사용)
-        binding.leftNumberPicker.value = mainViewModel.leftPressure ?: defaultPressure
-        binding.rightNumberPicker.value = mainViewModel.rightPressure ?: defaultPressure
-
         binding.leftNumberPicker.displayedValues = stepArr
         binding.rightNumberPicker.displayedValues = stepArr
         binding.leftNumberPicker.wrapSelectorWheel = false
         binding.rightNumberPicker.wrapSelectorWheel = false
 
-        // NumberPicker 값 변경 리스너 설정 (변경 시 ViewModel 업데이트)
         binding.leftNumberPicker.setOnValueChangedListener { _, _, newVal ->
             mainViewModel.leftPressure = newVal
         }
@@ -223,11 +201,10 @@ class MainFragment : Fragment() {
             mainViewModel.rightPressure = newVal
         }
 
-        // Spinner 설정: 모드 선택 ("사용자 설정" vs 기타 자동 모드)
+        // Spinner 설정
         val modeOptions = resources.getStringArray(R.array.mode_list)
         val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, modeOptions)
         binding.spinnerMode.adapter = spinnerAdapter
-
         binding.spinnerMode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
@@ -236,7 +213,6 @@ class MainFragment : Fragment() {
                 id: Long
             ) {
                 val selectedMode = modeOptions[position]
-                // "사용자 설정" 선택 시 NumberPicker 활성화, 자동 모드 관련 오버레이 숨김
                 if (selectedMode == "사용자 설정") {
                     binding.leftNumberPicker.isEnabled = true
                     binding.rightNumberPicker.isEnabled = true
@@ -244,7 +220,6 @@ class MainFragment : Fragment() {
                     binding.overlayAutoMode.visibility = View.GONE
                     binding.tvAutoMode.visibility = View.GONE
                 } else {
-                    // 다른 모드 선택 시 NumberPicker 비활성화, 자동 모드 관련 UI 오버레이 표시('자동모드가 활성화 중입니다.')
                     binding.leftNumberPicker.isEnabled = false
                     binding.rightNumberPicker.isEnabled = false
                     binding.overlayAutoMode.visibility = View.VISIBLE
@@ -254,9 +229,7 @@ class MainFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) { }
         }
 
-        // Bluetooth 버튼 클릭 시 동작:
-        // 권한 확인 후, Bluetooth 비활성 상태이면 활성화 요청
-        // 이미 활성화된 경우 장치 검색 시작
+        // Bluetooth 버튼 클릭 이벤트
         binding.btnBluetooth.setOnClickListener {
             if (!hasBluetoothConnectPermission()) {
                 requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), REQUEST_CODE_PERMISSIONS)
@@ -271,8 +244,7 @@ class MainFragment : Fragment() {
             }
         }
 
-        // 동기화 버튼 클릭 시 동작
-        // 연결된 Bluetooth 기기를 통해 선택한 모드 및 압력 값 전송
+        // 동기화 버튼 클릭 이벤트
         binding.btnSync.setOnClickListener {
             if (bluetoothSocket == null || !bluetoothSocket!!.isConnected) {
                 Toast.makeText(requireContext(), "아직 기기에 연결되지 않았습니다.", Toast.LENGTH_SHORT).show()
@@ -282,7 +254,7 @@ class MainFragment : Fragment() {
             if (selectedMode == "사용자 설정") {
                 val leftValue: Int = binding.leftNumberPicker.value
                 val rightValue: Int = binding.rightNumberPicker.value
-                val command = "${'U'} ${leftValue}${','}${rightValue}${'.'}\n"
+                val command = "${'U'} ${leftValue},${rightValue}.\n"
                 try {
                     bluetoothSocket?.outputStream?.write(command.toByteArray())
                     Toast.makeText(requireContext(), "동기화 명령 전송 완료", Toast.LENGTH_SHORT).show()
@@ -291,9 +263,6 @@ class MainFragment : Fragment() {
                     Toast.makeText(requireContext(), "전송 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                // 약, 중, 강 모드의 경우:
-                // 현재 사용중인 프로필의 gender 값을 확인하여 '남'일때 (L, M, H),
-                // '여'일때 (l, m, h) 형태로 명령 전송
                 val currentGender = currentProfile?.gender ?: "남"
                 val command = when (selectedMode) {
                     "약" -> if (currentGender == "남") "L\n" else "l\n"
@@ -311,26 +280,87 @@ class MainFragment : Fragment() {
             }
         }
 
-        // Bluetooth 버튼의 색상 업데이트 (Bluetooth 활성화 여부에 따라 다름)
         updateBluetoothButtonTint()
-        // 현재 선택된 프로필 재로드 (필요 시 UI 업데이트)
         loadSelectedProfile()
-        // Bluetooth 연결 모니터링 시작
         connectionHandler.post(connectionMonitor)
 
         return root
     }
 
-    // 프로필 변경 감지 시 호출되는 함수 (프로필 재로드)
-    private var isProfileChanging = false
+    // 프로필 전환 시 호출되는 함수 – 세션 타이머를 00:00:00으로 초기화하고 TimerService를 재시작
     private fun onProfileChanged() {
-        isProfileChanging = true
+        val serviceIntent = Intent(requireContext(), TimerService::class.java)
+        requireContext().stopService(serviceIntent)
+
+        currentProfile?.usedTimeSeconds = 0
+        mainViewModel.elapsedSeconds.value = 0
+
+        // UI 직접 업데이트: 타이머 텍스트를 00:00:00으로 설정
+        binding.timerTextView.text = "사용한 시간: 00:00:00"
+
+        val prefs = requireContext().getSharedPreferences("selectedProfile", MODE_PRIVATE)
+        prefs.edit().putString("selectedProfileJson", Gson().toJson(currentProfile)).commit()
+
+        loadSelectedProfile() // 새 값(0)이 반영되도록
+
+        serviceIntent.putExtra("initialTime", 0)
+        requireContext().startService(serviceIntent)
+    }
+
+    private fun resetSessionTimer() {
+        // 세션 타이머 값을 0으로 초기화
+        mainViewModel.elapsedSeconds.value = 0
+        currentProfile?.usedTimeSeconds = 0
+
+        // 변경된 프로필 정보를 SharedPreferences에 저장
+        val prefs = requireContext().getSharedPreferences("selectedProfile", MODE_PRIVATE)
+        prefs.edit().putString("selectedProfileJson", Gson().toJson(currentProfile)).apply()
+
+        // UI 업데이트 (타이머 텍스트를 00:00:00으로)
+        binding.timerTextView.text = "사용한 시간: 00:00:00"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // SharedPreferences에서 프로필을 불러옴
+        val prefs = requireContext().getSharedPreferences("selectedProfile", MODE_PRIVATE)
+        val profileJson = prefs.getString("selectedProfileJson", null)
+        if (profileJson != null) {
+            val loadedProfile = Gson().fromJson(profileJson, ProfileData::class.java)
+            // 기존 프로필 ID가 다를 때만 타이머 초기화 (새 프로세스인 경우 ViewModel 값은 0)
+            if (loadedProfile.id != mainViewModel.previousProfileId) {
+                mainViewModel.elapsedSeconds.value = 0
+                mainViewModel.previousProfileId = loadedProfile.id
+            }
+        }
         loadSelectedProfile()
-        isProfileChanging = false
+
+        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        requireContext().registerReceiver(bluetoothStateReceiver, filter)
+        requireContext().registerReceiver(timerTickReceiver, IntentFilter("TIMER_TICK"))
+    }
+
+    // onPause()에서는 타이머 관련 업데이트 함수를 호출하지 않고, Receiver들을 해제합니다.
+    override fun onPause() {
+        super.onPause()
+        connectionHandler.removeCallbacks(connectionMonitor)
+        requireContext().unregisterReceiver(bluetoothStateReceiver)
+        requireContext().unregisterReceiver(timerTickReceiver)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun formatSecondsToHMS(seconds: Int): String {
+        val hours = seconds / 3600
+        val minutes = (seconds % 3600) / 60
+        val secs = seconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, secs)
     }
 
     // SharedPreferences에서 프로필을 로드하여 UI에 반영
-    // 기존 loadSelectedProfile() 함수 수정 (타이머 UI 업데이트 추가)
     private fun loadSelectedProfile() {
         val prefs = requireContext().getSharedPreferences("selectedProfile", MODE_PRIVATE)
         val profileJson = prefs.getString("selectedProfileJson", null)
@@ -338,16 +368,20 @@ class MainFragment : Fragment() {
             val loadedProfile = Gson().fromJson(profileJson, ProfileData::class.java)
             currentProfile = loadedProfile
             binding.textUserName.text = currentProfile?.name ?: "USER1"
-            // 프로필에 저장된 사용 시간으로 타이머 텍스트 업데이트
-            binding.timerTextView.text = "사용한 시간: ${formatSecondsToHMS(currentProfile?.usedTimeSeconds ?: 0)}"
+            // 세션 타이머는 ViewModel의 값 또는 프로필의 usedTimeSeconds 값을 사용합니다.
+            val elapsed = mainViewModel.elapsedSeconds.value ?: currentProfile?.usedTimeSeconds ?: 0
+            binding.timerTextView.text = "사용한 시간: ${formatSecondsToHMS(elapsed)}"
         } else {
             binding.textUserName.text = "USER1"
             binding.timerTextView.text = "사용한 시간: 00:00:00"
         }
     }
 
+    // TimerService에서 주간 통계를 업데이트하므로, 여기서는 사용하지 않습니다.
+    private fun updateCurrentProfileUsage() {
+        // 사용하지 않음
+    }
 
-    // 오늘 날짜를 키로 사용해 사용 시간을 저장 (예: "yyyy-MM-dd" 형식) TimerServiec에서 다른 레이아웃 or 앱이 백그라운드에 있을 때 시간을 저장할 곳이 필요하므로 저장이 필요함
     private fun saveUsageTimeForToday(usedSeconds: Int) {
         val prefs = requireContext().getSharedPreferences("dailyUsage", Context.MODE_PRIVATE)
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
@@ -355,21 +389,7 @@ class MainFragment : Fragment() {
         Log.d("MainFragment", "Saved usage for $today: $usedSeconds seconds")
     }
 
-    // 프로필 변경이나 onPause() 시 현재 타이머 값을 프로필에 업데이트하여 저장
-    private fun updateCurrentProfileUsage() {
-        if (isProfileChanging) return
-        currentProfile?.let { profile ->
-            val currentSeconds = mainViewModel.elapsedSeconds.value ?: 0
-            profile.usedTimeSeconds = currentSeconds
-            profile.lastUsedTimestamp = System.currentTimeMillis()
-            val prefs = requireContext().getSharedPreferences("selectedProfile", MODE_PRIVATE)
-            prefs.edit().putString("selectedProfileJson", Gson().toJson(profile)).commit()
-            Log.d("MainFragment", "Updated profile: used time = $currentSeconds seconds, last used = ${profile.lastUsedTimestamp}")
-            saveUsageTimeForToday(currentSeconds)
-        }
-    }
-
-    // BluetoothAdapter 초기화 (BluetoothManager를 통해 가져옴)
+    // BluetoothAdapter 초기화
     private fun initializeBluetooth() {
         val bluetoothManager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
@@ -378,7 +398,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    // Bluetooth 버튼의 색상을 Bluetooth 활성화 여부에 따라 변경 (UI 피드백 제공)
+    // Bluetooth 버튼 색상 업데이트
     private fun updateBluetoothButtonTint() {
         try {
             if (!hasBluetoothConnectPermission()) {
@@ -402,7 +422,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    // Bluetooth 장치 검색 시작: 필요한 권한 확인 후 검색 시작 및 Receiver 등록
+    // Bluetooth 장치 검색 시작
     private fun startDiscovery() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN)
             != PackageManager.PERMISSION_GRANTED ||
@@ -424,7 +444,6 @@ class MainFragment : Fragment() {
                 bluetoothAdapter.cancelDiscovery()
             }
             discoveredDevices.clear()
-            // IntentFilter 등록 (장치 발견 및 검색 종료 이벤트 감지)
             val filter = IntentFilter().apply {
                 addAction(BluetoothDevice.ACTION_FOUND)
                 addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
@@ -437,7 +456,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    // 검색된 Bluetooth 장치와 이미 페어링된 장치를 합쳐서 다이얼로그로 보여줌
+    // 검색된 Bluetooth 장치와 페어링된 장치를 다이얼로그로 표시
     private fun showDevicesDialog() {
         val pairedDevices: Set<BluetoothDevice> =
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
@@ -446,8 +465,6 @@ class MainFragment : Fragment() {
             } else {
                 emptySet()
             }
-        // Unknown Device는 필터링함.
-        // 모든 장치 (등록된 장치 + 검색된 장치)만 검색됨
         val allDevices = mutableSetOf<BluetoothDevice>()
         allDevices.addAll(pairedDevices.filter { it.name != null && it.name.isNotEmpty() })
         allDevices.addAll(discoveredDevices.filter { it.name != null && it.name.isNotEmpty() })
@@ -457,11 +474,10 @@ class MainFragment : Fragment() {
             return
         }
 
-        // 장치 이름 및 주소 표시 (등록된 기기의 경우 "(Registered)" 표시)
         val deviceNames = allDevices.map { device ->
             val name = try {
                 if (hasBluetoothConnectPermission()) {
-                    device.name  // 이름이 null이 아닌 디바이스만 표시
+                    device.name
                 } else {
                     "Permission not granted"
                 }
@@ -472,7 +488,6 @@ class MainFragment : Fragment() {
             else "$name\n${device.address}"
         }.toTypedArray()
 
-        // AlertDialog 생성: 장치 목록 중 선택할 수 있도록 함
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Select Bluetooth Device")
         builder.setItems(deviceNames) { dialog, which ->
@@ -484,7 +499,7 @@ class MainFragment : Fragment() {
         builder.show()
     }
 
-    // 선택된 Bluetooth 장치와 연결 시도 및 연결 성공 시 TimerService 시작, 프로필 로드 등 수행
+    // 선택된 Bluetooth 장치와 연결 시도
     private fun connectToDevice(device: BluetoothDevice) {
         val connectDialog = ProgressDialog(requireContext()).apply {
             val deviceName = try {
@@ -502,10 +517,6 @@ class MainFragment : Fragment() {
         }
         Thread {
             try {
-                if (!hasBluetoothConnectPermission()) {
-                    throw SecurityException("BLUETOOTH_CONNECT permission not granted")
-                }
-                // SPP UUID를 사용하여 Bluetooth 소켓 생성 및 연결
                 val socket = device.createRfcommSocketToServiceRecord(SPP_UUID)
                 socket.connect()
                 bluetoothSocket = socket
@@ -513,14 +524,14 @@ class MainFragment : Fragment() {
                     connectDialog.dismiss()
                     Toast.makeText(requireContext(), "Connected to ${device.name ?: device.address}", Toast.LENGTH_SHORT).show()
                     isPaired = true
-                    loadSelectedProfile()
-                    // 연결 후 현재 프로필의 사용 시간으로 TimerService 초기화
-                    val initialTime = currentProfile?.usedTimeSeconds ?: 0
+                    loadSelectedProfile() // 프로필 정보 로드
+
+                    // 연결 후 타이머 서비스를 0부터 시작하도록 초기화합니다.
                     val serviceIntent = Intent(requireContext(), TimerService::class.java)
-                    serviceIntent.putExtra("initialTime", initialTime)
+                    serviceIntent.putExtra("initialTime", 0)
                     requireContext().stopService(serviceIntent)
                     requireContext().startService(serviceIntent)
-                    Log.d("MainFragment", "Bluetooth connected. Timer service started with initial time: $initialTime")
+                    Log.d("MainFragment", "Bluetooth connected. Timer service started with initial time: 0")
                 }
             } catch (e: Exception) {
                 Log.e("MainFragment", "Connection failed: ${e.message}", e)
@@ -532,7 +543,7 @@ class MainFragment : Fragment() {
         }.start()
     }
 
-    // Bluetooth 활성화 요청 결과를 처리 (요청 후 onActivityResult에서 호출)
+    // Bluetooth 활성화 요청 결과 처리
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_ENABLE_BT) {
@@ -546,7 +557,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    // 권한 요청 결과를 처리: 모든 권한이 승인된 경우 Bluetooth 검색 시작
+    // 권한 요청 결과 처리
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
@@ -560,37 +571,5 @@ class MainFragment : Fragment() {
                 }
             }
         }
-    }
-
-    // Fragment가 다시 활성화될 때 필요한 Receiver 등록 및 프로필 로드
-    override fun onResume() {
-        super.onResume()
-        loadSelectedProfile()
-        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        requireContext().registerReceiver(bluetoothStateReceiver, filter)
-        requireContext().registerReceiver(timerTickReceiver, IntentFilter("TIMER_TICK"))
-    }
-
-    // Fragment가 백그라운드로 전환될 때 사용 시간 업데이트 및 Receiver 해제, 연결 모니터 중지
-    override fun onPause() {
-        super.onPause()
-        updateCurrentProfileUsage()
-        connectionHandler.removeCallbacks(connectionMonitor)
-        requireContext().unregisterReceiver(bluetoothStateReceiver)
-        requireContext().unregisterReceiver(timerTickReceiver)
-    }
-
-    // View가 파괴될 때 ViewBinding 해제
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    // 초 단위의 시간을 hour:minute:second 형식의 문자열로 포맷팅하는 헬퍼 함수
-    private fun formatSecondsToHMS(seconds: Int): String {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val secs = seconds % 60
-        return String.format("%02d:%02d:%02d", hours, minutes, secs)
     }
 }
