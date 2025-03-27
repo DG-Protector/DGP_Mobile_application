@@ -61,7 +61,7 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
                         val usageSeconds = weeklyUsage[dateStr]?.toFloat() ?: 0f
                         entries.add(Entry(day, usageSeconds))
                     }
-                    val dataSet = LineDataSet(entries, "Weekly Usage").apply {
+                    val dataSet = LineDataSet(entries, "Using Time").apply {
                         axisDependency = YAxis.AxisDependency.LEFT
                         color = ContextCompat.getColor(requireContext(), R.color.kitel_navy_700)
                         valueTextColor = ContextCompat.getColor(requireContext(), R.color.kitel_navy_700)
