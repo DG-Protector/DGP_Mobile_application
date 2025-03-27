@@ -38,21 +38,12 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/item_text_profile_usage"
+            android:id="@+id/profile_details_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="오늘 사용한 시간: 00:00:00"
+            android:text="나이: -, 성별: -&#10;키: -cm, 몸무게: -kg"
             android:textAlignment="center"
             android:textColor="@color/kitel_navy_700"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/item_text_profile_last_usage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="마지막 사용: 00 hour ago"
-            android:textAlignment="center"
-            android:textColor="@color/kitel_navy_0_act"
             android:textSize="16sp" />
 
 

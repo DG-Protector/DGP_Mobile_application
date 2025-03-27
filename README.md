@@ -38,3 +38,7 @@ DGP's Mobile application
 'Daily using time goal is finished.'
 'Progress Bar is custom.'
 'Milestone is added in progress bar every 30 minutes.'
+'There is data that recommends wearing the posture correction band for 1 to 2 hours, so the target achievement value is 1 hour and 30 minutes.'
+
+''25.03.28.v2.1 | Profiles'
+'In profiles, the content displayed on the profile(age, gender, height and weight) is matched with the selected profile.'
