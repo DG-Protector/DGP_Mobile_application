@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 프로필 카드 영역: 이 영역의 텍스트가 updateProfileInfo()에 의해 업데이트됩니다. -->
+            <!-- 프로필 카드 영역: updateProfileInfo()에 의해 업데이트됩니다. -->
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
@@ -99,7 +99,51 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- (기타 콘텐츠 생략) -->
+            <!-- 목표 달성 UI 영역: 오늘 누적 사용시간, 게이지, 응원 메시지 -->
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/btn_round"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- 오늘 누적 사용 시간 텍스트 -->
+                <TextView
+                    android:id="@+id/todayUsageTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘 00:00:00 사용했습니다."
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/kitel_navy_700"
+                    android:layout_gravity="center" />
+
+                <!-- 진행률 게이지 (ProgressBar) -->
+                <ProgressBar
+                    android:id="@+id/usageProgressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="0"
+                    android:layout_marginTop="8dp" />
+
+                <!-- 응원 메시지 텍스트 -->
+                <TextView
+                    android:id="@+id/encouragementTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘도 화이팅!"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/kitel_navy_700" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
