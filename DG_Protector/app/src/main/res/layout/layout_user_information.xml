@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -34,23 +33,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/kitel_navy_700" />
 
-    <!-- ScrollView 내에 모든 콘텐츠 배치 -->
+    <!-- ScrollView 내의 전체 콘텐츠 배치 -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/logo_image_view4"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/logo_image_view4">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 프로필 카드 영역: updateProfileInfo()에 의해 업데이트됩니다. -->
+            <!-- 프로필 카드 영역 (기존 코드 유지) -->
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
@@ -62,6 +61,7 @@
                 android:elevation="3dp"
                 android:orientation="horizontal"
                 android:padding="10dp">
+
                 <ImageView
                     android:id="@+id/profile_image"
                     android:layout_width="90dp"
@@ -99,7 +99,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 목표 달성 UI 영역: 오늘 누적 사용시간, 게이지, 응원 메시지 -->
+            <!-- 오늘 누적 사용시간과 게이지, 격려 메시지 영역 -->
             <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
@@ -110,39 +110,40 @@
                 android:background="@drawable/btn_round"
                 android:elevation="3dp"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
-                <!-- 오늘 누적 사용 시간 텍스트 -->
+                <!-- 오늘 사용시간 텍스트 -->
                 <TextView
                     android:id="@+id/todayUsageTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="오늘 00:00:00 사용했습니다."
-                    android:textSize="18sp"
-                    android:textStyle="bold"
+                    android:text="오늘 00시간 00분 00초 사용했습니다."
+                    android:textAlignment="center"
                     android:textColor="@color/kitel_navy_700"
-                    android:layout_gravity="center" />
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                <!-- 진행률 게이지 (ProgressBar) -->
-                <ProgressBar
+                <!-- 게이지: MilestoneProgressBar 사용 (목표: 1시간 30분 = 5400초; 테스트 시 max 조정 가능) -->
+                <com.teamkitel.dg_protector.ui.user_information.MilestoneProgressBar
                     android:id="@+id/usageProgressBar"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="100"
-                    android:progress="0"
-                    android:layout_marginTop="8dp" />
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:max="5400"
+                    android:progress="0" />
 
-                <!-- 응원 메시지 텍스트 -->
+                <!-- 격려 메시지 텍스트 -->
                 <TextView
                     android:id="@+id/encouragementTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="오늘도 화이팅!"
-                    android:textSize="16sp"
                     android:layout_marginTop="8dp"
-                    android:layout_gravity="center"
-                    android:textColor="@color/kitel_navy_700" />
+                    android:gravity="center"
+                    android:text="오늘도 화이팅!"
+                    android:textAlignment="center"
+                    android:textColor="@color/kitel_navy_700"
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

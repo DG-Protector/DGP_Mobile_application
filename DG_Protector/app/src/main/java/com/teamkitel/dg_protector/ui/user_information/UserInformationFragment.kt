@@ -5,13 +5,14 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope  // 추가: lifecycleScope 사용을 위해
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.teamkitel.dg_protector.R
 import com.teamkitel.dg_protector.databinding.LayoutUserInformationBinding
@@ -23,8 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
-import android.view.Gravity
-
 
 class UserInformationFragment : Fragment() {
 
@@ -60,7 +59,7 @@ class UserInformationFragment : Fragment() {
         }
         // 기존 프로필 정보 로드
         loadProfileInfo()
-        // 오늘 누적 사용시간 업데이트
+        // 오늘 누적 사용시간 업데이트 (게이지바, 격려 문구 등)
         updateTodayUsage()
 
         return root
@@ -72,7 +71,7 @@ class UserInformationFragment : Fragment() {
      * - 오늘 날짜(yyyy-MM-dd)를 구한 후 현재 선택된 프로필의 ID를 읽어옵니다.
      * - getWeeklyUsageFlow()를 사용하여 오늘 사용량(초)을 Flow로 받아오고,
      *   이를 HH:MM:SS 형태로 변환하여 todayUsageTextView에 표시합니다.
-     * - 또한 목표(90분)를 기준으로 ProgressBar(usageProgressBar)의 진행률을 업데이트하고,
+     * - 목표: 1시간 30분(90분 = 5400초)을 기준으로 ProgressBar(usageProgressBar)의 진행률를 업데이트하고,
      *   사용시간에 따른 격려 메시지를 encouragementTextView에 표시합니다.
      */
     private fun updateTodayUsage() {
@@ -81,25 +80,25 @@ class UserInformationFragment : Fragment() {
         val currentProfileId = getCurrentProfileId(requireContext())
         if (currentProfileId.isNotEmpty()) {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                // 시작일과 종료일을 오늘로 설정하여 오늘 사용량만 받아옴
+                // 오늘 사용량만 받기 위해 시작일과 종료일을 오늘로 설정
                 getWeeklyUsageFlow(requireContext(), currentProfileId, today, today).collect { usageMap ->
                     val todayUsageSeconds = usageMap[today] ?: 0
                     withContext(Dispatchers.Main) {
                         // 오늘 누적 사용시간 업데이트 (HH:MM:SS 형식)
                         binding.todayUsageTextView.text = "오늘 ${formatSecondsToHMS(todayUsageSeconds)} 사용했습니다."
 
-                        // 목표: 1시간 30분 = 90분 (90*60초)
+                        // 목표: 1시간 30분 = 5400초
                         val targetSeconds = 90 * 60
                         // ProgressBar 진행률 (0~100)
                         val progress = ((todayUsageSeconds.toFloat() / targetSeconds) * 100).toInt().coerceAtMost(100)
                         binding.usageProgressBar.progress = progress
 
-                        // 격려 메시지 결정 (예시)
+                        // 격려 메시지 결정
                         val encouragement = when {
                             todayUsageSeconds < 30 * 60 -> "아직 30분 미만입니다.\n조금만 더 사용해 보세요!"
                             todayUsageSeconds < 60 * 60 -> "30분 달성!\n계속 진행하세요!"
                             todayUsageSeconds < 90 * 60 -> "1시간 달성!\n아주 좋아요!"
-                            else -> "축하합니다!\n하루 권장 사용량을 달성했습니다!"
+                            else -> "축하합니다!\n오늘의 목표를 달성했습니다!"
                         }
                         binding.encouragementTextView.gravity = Gravity.CENTER
                         binding.encouragementTextView.text = encouragement
@@ -109,7 +108,7 @@ class UserInformationFragment : Fragment() {
         }
     }
 
-    // SharedPreferences에서 현재 선택된 프로필의 ID를 반환
+    // SharedPreferences에서 현재 선택된 프로필의 ID 반환
     private fun getCurrentProfileId(context: Context): String {
         val prefs = context.getSharedPreferences("selectedProfile", MODE_PRIVATE)
         val profileJson = prefs.getString("selectedProfileJson", null)

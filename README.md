@@ -27,9 +27,14 @@ DGP's Mobile application
 'In Statistics, Add Using time graph.'
 
 '25.03.28.v1.1 | User Information'
-'Add goal Using time'
+'Add goal Using time.'
 'Add text that changes based on the time achieved'
 '0m ~ 30m: 아직 30분 미만입니다. 조금만 더 사용해 보세요!'
 '30m ~ 1h: 30분 달성! 계속 진행하세요!'
 '1h ~ 1h 30m: 1시간 달성! 아주 좋아요!'
 '1h 30m ~ : 축하합니다! 하루 권장 사용량을 달성했습니다!'
+
+'25.03.28.v1.2 | User Information'
+'Daily using time goal is finished.'
+'Progress Bar is custom.'
+'Milestone is added in progress bar every 30 minutes.'
