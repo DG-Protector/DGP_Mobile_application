@@ -285,7 +285,7 @@
             android:text="USER"
             android:textAlignment="center"
             android:textColor="@color/kitel_navy_700"
-            android:textSize="35sp"
+            android:textSize="40sp"
             android:textStyle="bold" />
 
         <!-- 예시: MainFragment의 상단 로고 아래에 타이머를 표시 -->

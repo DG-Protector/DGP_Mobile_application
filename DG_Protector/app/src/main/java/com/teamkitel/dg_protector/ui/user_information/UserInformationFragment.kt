@@ -25,6 +25,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
+import android.widget.TextView
+import android.widget.ImageView
+import android.widget.Button
+
 
 class UserInformationFragment : Fragment() {
 
@@ -54,6 +58,40 @@ class UserInformationFragment : Fragment() {
             val intent = Intent(requireContext(), ProfilesActivity::class.java)
             profilesLauncher.launch(intent)
         }
+
+        binding.stretchButton1.setOnClickListener {
+            showStretchDialog(
+                "① 턱 당기기 스트레칭",
+                R.drawable.chin_tuck2,
+                "1. 등을 곧게 펴고 앉습니다.\n2. 목 뒤쪽이 길어지는 느낌이 들도록 턱을 살짝 당겨줍니다.\n3. 5초간 유지 후 이완합니다.\n총 10회 반복합니다."
+            )
+        }
+
+        binding.stretchButton2.setOnClickListener {
+            showStretchDialog(
+                "② 견갑골(날개뼈) 모으기",
+                R.drawable.scapular_squeezes2,
+                "1. 의자에 앉아 허리를 곧게 펍니다.\n2. 양팔을 옆으로 벌리고 팔꿈치를 구부립니다.\n3. 날개뼈를 서로 모은다는 느낌으로 당깁니다.\n4. 5초 유지 후 이완.\n총 10회 반복합니다."
+            )
+        }
+
+        binding.stretchButton3.setOnClickListener {
+            showStretchDialog(
+                "③ 가슴 근육 스트레칭",
+                R.drawable.chest_muscle_stretching2,
+                "1. 문틀 앞에 서서 양손을 어깨 높이로 올려 문틀에 댑니다.\n2. 한 발을 앞으로 내딛고 몸을 천천히 앞으로 기울이며 가슴을 내밀어줍니다.\n3. 가슴이 펴지는 느낌을 느끼며 20~30초간 유지합니다.\n4. 반대쪽도 반복합니다."
+            )
+        }
+
+        binding.stretchButton4.setOnClickListener {
+            showStretchDialog(
+                "④ 상부 승모근 스트레칭",
+                R.drawable.upper_trapezius2,
+                "1. 한쪽 손으로 머리를 옆으로 당깁니다.\n2. 반대쪽 어깨는 내린 상태로 15초간 유지합니다.\n3. 반대쪽도 반복합니다."
+            )
+        }
+
+
         loadProfileInfo()
         updateTodayUsage()
 
@@ -126,6 +164,24 @@ class UserInformationFragment : Fragment() {
         )
         updateProfileInfo(profile.name, profile.age, profile.gender, profile.height, profile.weight)
     }
+
+    private fun showStretchDialog(title: String, imageResId: Int, description: String) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_stretch_explain, null)
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        dialogView.findViewById<TextView>(R.id.stretch_title).text = title
+        dialogView.findViewById<ImageView>(R.id.stretch_image).setImageResource(imageResId)
+        dialogView.findViewById<TextView>(R.id.stretch_description).text = description
+
+        dialogView.findViewById<Button>(R.id.btn_close).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

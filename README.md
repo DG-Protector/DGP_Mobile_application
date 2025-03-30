@@ -49,3 +49,6 @@ DGP's Mobile application
 '25.03.30.v2.1 | Main'
 'Add Silence button and Buzzer button.'
 'The problem solves that crash due to which profile value is null.'
+
+'25.03.31.v1.1 | User_information'
+'Stretching recommendations is added'
