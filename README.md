@@ -45,3 +45,7 @@ DGP's Mobile application
 
 '25.03.28.v3.1 | Statistics'
 'graph's data name changes from Weekly time to Using time.'
+
+'25.03.30.v2.1 | Main'
+'Add Silence button and Buzzer button.'
+'The problem solves that crash due to which profile value is null.'

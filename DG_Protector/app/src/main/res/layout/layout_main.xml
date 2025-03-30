@@ -34,6 +34,37 @@
         app:tint="@color/default_white" />
 
     <!-- 모드 선택 영역 (기존 간격 그대로) -->
+
+    <ImageButton
+        android:id="@+id/btn_buzzer"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/btn_round"
+        android:elevation="3dp"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_buzzer_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/default_white" />
+
+    <ImageButton
+        android:id="@+id/btn_silence"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="160dp"
+        android:background="@drawable/btn_round"
+        android:elevation="3dp"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_silence_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/default_white" />
+
     <LinearLayout
         android:id="@+id/linearLayout5"
         android:layout_width="0dp"
@@ -251,10 +282,10 @@
             android:id="@+id/text_user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="USER1"
+            android:text="USER"
             android:textAlignment="center"
             android:textColor="@color/kitel_navy_700"
-            android:textSize="40sp"
+            android:textSize="35sp"
             android:textStyle="bold" />
 
         <!-- 예시: MainFragment의 상단 로고 아래에 타이머를 표시 -->
