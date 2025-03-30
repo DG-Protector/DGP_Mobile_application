@@ -280,6 +280,21 @@ class MainFragment : Fragment() {
             }
         }
 
+        // 밴드 풀기 버튼 클릭 이벤트
+        binding.btnReleaseBand.setOnClickListener {
+            if (bluetoothSocket == null || !bluetoothSocket!!.isConnected) {
+                Toast.makeText(requireContext(), "아직 기기에 연결되지 않았습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            try {
+                bluetoothSocket?.outputStream?.write("e\n".toByteArray())
+                Toast.makeText(requireContext(), "밴드 풀기 명령 전송 완료", Toast.LENGTH_SHORT).show()
+            } catch (e: IOException) {
+                Toast.makeText(requireContext(), "전송 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
         updateBluetoothButtonTint()
         loadSelectedProfile()
         connectionHandler.post(connectionMonitor)
@@ -340,7 +355,7 @@ class MainFragment : Fragment() {
         requireContext().registerReceiver(timerTickReceiver, IntentFilter("TIMER_TICK"))
     }
 
-    // onPause()에서는 타이머 관련 업데이트 함수를 호출하지 않고, Receiver들을 해제합니다.
+    // onPause()에서는 타이머 관련 업데이트 함수를 호출하지 않고 Receiver들을 해제
     override fun onPause() {
         super.onPause()
         connectionHandler.removeCallbacks(connectionMonitor)
@@ -375,11 +390,6 @@ class MainFragment : Fragment() {
             binding.textUserName.text = "USER1"
             binding.timerTextView.text = "사용한 시간: 00:00:00"
         }
-    }
-
-    // TimerService에서 주간 통계를 업데이트하므로, 여기서는 사용하지 않습니다.
-    private fun updateCurrentProfileUsage() {
-        // 사용하지 않음
     }
 
     private fun saveUsageTimeForToday(usedSeconds: Int) {

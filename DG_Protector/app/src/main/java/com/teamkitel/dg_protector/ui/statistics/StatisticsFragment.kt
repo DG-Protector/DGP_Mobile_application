@@ -52,7 +52,7 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
                     val usageText = weeklyUsage.entries.joinToString("\n") {
                         "${it.key}: ${it.value}초"
                     }
-                    // x축는 날짜의 '일(day)'만 사용 (예: "2025-03-27" → 27)
+                    // x축는 날짜의 '일(day)'만 사용
                     val entries = mutableListOf<Entry>()
                     val sortedDates = weeklyUsage.keys.sorted() // yyyy-MM-dd 형식이면 올바른 순서
                     for (dateStr in sortedDates) {
@@ -65,7 +65,6 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
                         axisDependency = YAxis.AxisDependency.LEFT
                         color = ContextCompat.getColor(requireContext(), R.color.kitel_navy_700)
                         valueTextColor = ContextCompat.getColor(requireContext(), R.color.kitel_navy_700)
-                        // 추가 설정 (예: 선 굵기, 원형 점 등) 가능
                     }
                     val lineData = LineData(dataSet)
 
@@ -83,9 +82,9 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
                         // 차트 오른쪽 아래 Description Label 제거
                         binding.lineChart.description.isEnabled = false
 
-                        // y축 설정: 테스트용으로 0 ~ 20분(1200초) 범위로 제한
+                        // y축 설정: 테스트용으로 0 ~60분(3600초) 범위로 제한
                         binding.lineChart.axisLeft.axisMinimum = 0f
-                        binding.lineChart.axisLeft.axisMaximum = 20 * 60f
+                        binding.lineChart.axisLeft.axisMaximum = 60 * 60f
                         binding.lineChart.axisRight.isEnabled = false
 
                         binding.lineChart.invalidate() // 차트 갱신
