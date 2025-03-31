@@ -234,9 +234,9 @@ class MainFragment : Fragment() {
                 // 프로필의 성별에 따라 명령 값이 다르게 전송됨
                 val currentGender = ProfileManager.currentProfile?.gender ?: "남"
                 val command = when (selectedMode) {
-                    "약" -> if (currentGender == "남") "L\n" else "l\n"
-                    "중" -> if (currentGender == "남") "M\n" else "m\n"
-                    "강" -> if (currentGender == "남") "H\n" else "h\n"
+                    "약" -> if (currentGender == "남") "L.\n" else "l.\n"
+                    "중" -> if (currentGender == "남") "M.\n" else "m.\n"
+                    "강" -> if (currentGender == "남") "H.\n" else "h.\n"
                     else -> "$selectedMode\n"
                 }
                 try {
@@ -271,14 +271,14 @@ class MainFragment : Fragment() {
 
         // btnBuzzer 버튼 클릭 시, 'B' 전송 및 버튼 색상 변경
         binding.btnBuzzer.setOnClickListener {
-            sendData("B\n")
+            sendData("B.\n")
             binding.btnBuzzer.setColorFilter(navyColor)     // 선택된 버튼을 navy 색으로 변경
             binding.btnSilence.setColorFilter(whiteColor)   // 나머지 버튼은 white 색 유지
         }
 
         // btnSilence 버튼 클릭 시, 'S' 전송 및 버튼 색상 변경
         binding.btnSilence.setOnClickListener {
-            sendData("S\n")
+            sendData("S.\n")
             binding.btnSilence.setColorFilter(navyColor)    // 선택된 버튼을 navy 색으로 변경
             binding.btnBuzzer.setColorFilter(whiteColor)    // 나머지 버튼은 white 색 유지
         }

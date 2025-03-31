@@ -6,7 +6,9 @@
 contribution by softyware21
 last updateed at '25.03.31
 
-##Structure
+## Structure
+
+
 25.03.25.v1 | first file upload
 
 '25.03.25.v2.1 | MainFragment, Sending values according to mode edit.'
