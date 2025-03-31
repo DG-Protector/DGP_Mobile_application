@@ -52,3 +52,7 @@ DGP's Mobile application
 
 '25.03.31.v1.1 | User_information'
 'Stretching recommendations is added'
+
+'25.03.31.v2.1 | Statistics'
+'Only seconds text → hours/minutes/seconds'
+'y-axis max is 6 hours '

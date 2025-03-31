@@ -49,8 +49,10 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
                 getWeeklyUsageFlow(requireContext(), currentProfileId, startDate, endDate).collect { weeklyUsage ->
                     // weeklyUsage: Map<String, Int> (key: "yyyy-MM-dd", value: 사용한 초)
                     // 기존처럼 텍스트뷰에 주간 사용 데이터를 출력
-                    val usageText = weeklyUsage.entries.joinToString("\n") {
-                        "${it.key}: ${it.value}초"
+                    val usageText = weeklyUsage.entries.joinToString("\n") { entry ->
+                        val seconds = entry.value ?: 0
+                        val formattedTime = formatSecondsToTime(seconds)
+                        "${entry.key}: $formattedTime"
                     }
                     // x축는 날짜의 '일(day)'만 사용
                     val entries = mutableListOf<Entry>()
@@ -61,33 +63,35 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
                         val usageSeconds = weeklyUsage[dateStr]?.toFloat() ?: 0f
                         entries.add(Entry(day, usageSeconds))
                     }
+                    // 기존 데이터셋 생성 후에 커스텀 포맷터 적용
                     val dataSet = LineDataSet(entries, "Using Time").apply {
                         axisDependency = YAxis.AxisDependency.LEFT
                         color = ContextCompat.getColor(requireContext(), R.color.kitel_navy_700)
                         valueTextColor = ContextCompat.getColor(requireContext(), R.color.kitel_navy_700)
+                        // 데이터 라벨에 시간 포맷 적용
+                        valueFormatter = TimeValueFormatter()
                     }
                     val lineData = LineData(dataSet)
 
                     withContext(Dispatchers.Main) {
-                        // 텍스트뷰에 주간 사용 데이터를 표시
                         binding.weeklyUsageTextView.text = usageText
-
-                        // 선그래프에 데이터 적용
                         binding.lineChart.data = lineData
 
-                        // x축 설정: ValueFormatter를 사용해 소수점 없이 정수 문자열로 보이게 함
                         binding.lineChart.xAxis.valueFormatter = DayValueFormatter()
                         binding.lineChart.xAxis.granularity = 1f
 
-                        // 차트 오른쪽 아래 Description Label 제거
                         binding.lineChart.description.isEnabled = false
 
-                        // y축 설정: 테스트용으로 0 ~60분(3600초) 범위로 제한
+                        // y축 범위를 0 ~ 6시간(21600초)으로 설정
                         binding.lineChart.axisLeft.axisMinimum = 0f
-                        binding.lineChart.axisLeft.axisMaximum = 60 * 60f
+                        binding.lineChart.axisLeft.axisMaximum = 6 * 60 * 60f  // 21600초
+                        // 1시간(3600초) 단위로 레이블이 표시되도록 설정
+                        binding.lineChart.axisLeft.granularity = 3600f
+                        binding.lineChart.axisLeft.setLabelCount(7, true)
+                        binding.lineChart.axisLeft.valueFormatter = HourAxisValueFormatter()
                         binding.lineChart.axisRight.isEnabled = false
 
-                        binding.lineChart.invalidate() // 차트 갱신
+                        binding.lineChart.invalidate()
                     }
                 }
             }
@@ -116,4 +120,46 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
             return value.toInt().toString()
         }
     }
+}
+
+// 1. 데이터셋에 사용할 시간 포맷터:
+class TimeValueFormatter : ValueFormatter() {
+    override fun getFormattedValue(value: Float): String {
+        val totalSeconds = value.toInt()
+        val hours = totalSeconds / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val seconds = totalSeconds % 60
+
+        val sb = StringBuilder()
+        if (hours > 0) {
+            sb.append("${hours}h")
+        }
+        // 시간 부분이 있으면 분이 0이어도 표시
+        if (hours > 0 || minutes > 0) {
+            if (sb.isNotEmpty()) sb.append(" ")
+            sb.append("${minutes}m")
+        }
+        if (seconds > 0) {
+            if (sb.isNotEmpty()) sb.append(" ")
+            sb.append("${seconds}s")
+        }
+        return sb.toString()
+    }
+}
+
+// 2. y축에 사용할 포맷터 (0은 빈 문자열 처리하여 1h부터 표시)
+class HourAxisValueFormatter : ValueFormatter() {
+    override fun getFormattedValue(value: Float): String {
+        // 3600초 미만은 빈 문자열로 처리 (즉, 0h는 표시하지 않음)
+        if (value < 3600f) return ""
+        val hours = (value / 3600).toInt()
+        return "${hours}h"
+    }
+}
+
+private fun formatSecondsToTime(seconds: Int): String {
+    val hours = seconds / 3600
+    val minutes = (seconds % 3600) / 60
+    val secs = seconds % 60
+    return String.format("%02d:%02d:%02d", hours, minutes, secs)
 }
