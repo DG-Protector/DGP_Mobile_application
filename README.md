@@ -13,7 +13,7 @@ last updateed at '25.03.31
 
 ### Main
 <p align="center">
-<src="https://github.com/user-attachments/assets/848cbd5f-5f7b-4d32-8255-96fa9e32b35c">
+<img src="https://github.com/user-attachments/assets/848cbd5f-5f7b-4d32-8255-96fa9e32b35c">
 </p>
 
 ### Statistics
