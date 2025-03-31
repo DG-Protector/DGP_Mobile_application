@@ -3,8 +3,7 @@
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 
-contribution by softyware21<br/>
-last updateed at '25.03.31
+contribution by softyware21<br/>last updateed at '25.03.31
 
 ## Structure
 
