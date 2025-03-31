@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.teamkitel.dg_protector.R
 
-// 사용자 정보 액티비티 Class.
-// User Information Fragment를 로드함.
+// 사용자 정보 액티비티 Class
+// User Information Fragment를 로드함
 class UserInformationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

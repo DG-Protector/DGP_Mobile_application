@@ -11,7 +11,7 @@ import android.view.View
  * MilestoneProgressBar
  * 목표 시간을 기준으로 진행률을 표시
  * 마일스톤(30분, 1시간, 1시간 30분)에 해당하는 지점을 원과 텍스트로 표시하는 커스텀 뷰
- * 기본 목표 시간은 1시간 30분(90분)이며, 각 마일스톤은 30분, 60분, 90분을 의미
+ * 하루 목표 시간은 1시간 30분(90분)이며, 각 마일스톤은 30분, 60분, 90분을 의미
  */
 class MilestoneProgressBar @JvmOverloads constructor(
     context: Context,
@@ -53,7 +53,7 @@ class MilestoneProgressBar @JvmOverloads constructor(
         }
 
 
-    // 목표 시간 (초) : 기본 90분 (1시간 30분)
+    // 목표 시간 : 1시간 30분
     var targetSeconds: Int = 90 * 60
 
     // 각 마일스톤은 30분, 60분, 90분을 의미.
@@ -89,19 +89,16 @@ class MilestoneProgressBar @JvmOverloads constructor(
         canvas.drawCircle(m2x, markerCenterY, markerRadius, milestonePaint)
         canvas.drawCircle(m3x, markerCenterY, markerRadius, milestonePaint)
 
-        // 마일스톤 라벨: 원 밑에 작게 표시 (아래쪽 여백 20f)
+        // 마일스톤 라벨: 원 밑에 작게 표시
         val labelY = markerCenterY + markerRadius + 20f
 
-        // 첫번째, 두번째 라벨은 중앙 정렬
         milestonePaint.textAlign = Paint.Align.CENTER
         canvas.drawText("30m", m1x, labelY, milestonePaint)
         canvas.drawText("1h", m2x, labelY, milestonePaint)
 
-        // 마지막 라벨은 오른쪽 정렬해서, 오른쪽 여백 내에서 표시되도록 함
         milestonePaint.textAlign = Paint.Align.RIGHT
         canvas.drawText("1h 30m", width - sideMargin, labelY, milestonePaint)
 
-        // 다른 그리기 작업 후 텍스트 정렬을 복구
         milestonePaint.textAlign = Paint.Align.CENTER
     }
 }

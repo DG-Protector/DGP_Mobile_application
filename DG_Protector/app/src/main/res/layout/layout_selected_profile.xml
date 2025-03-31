@@ -12,7 +12,6 @@
     android:orientation="horizontal"
     android:padding="10dp">
 
-    <!-- 프로필 이미지 -->
     <ImageView
         android:id="@+id/selected_profile_image"
         android:layout_width="90dp"
@@ -20,7 +19,6 @@
         android:src="@drawable/ic_account_black_24dp"
         android:tint="@color/kitel_navy_700" />
 
-    <!-- 프로필 정보 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"

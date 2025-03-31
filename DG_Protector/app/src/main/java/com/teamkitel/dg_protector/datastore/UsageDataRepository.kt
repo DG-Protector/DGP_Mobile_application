@@ -9,17 +9,21 @@ import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.*
 
+// 사용 기록 저장을 위한 고유 키를 생성하는 함수
+// ex) usage_user1_2025-03-31
 fun generateUsageKey(profileId: String, date: String): Preferences.Key<Int> {
     return intPreferencesKey("usage_${profileId}_$date")
 }
 
-// 기존 함수는 snapshot을 반환하지만, 이 함수는 실시간 Flow를 반환함.
+// 지정된 기간 동안의 일별 사용 시간을 Flow로 반환하는 함수
+// 실시간 변경 사항을 감지
 fun getWeeklyUsageFlow(context: Context, profileId: String, startDate: String, endDate: String): Flow<Map<String, Int>> {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val start = dateFormat.parse(startDate) ?: Date()
-    val end = dateFormat.parse(endDate) ?: Date()
+    val start = dateFormat.parse(startDate) ?: Date()       // 시작 날짜 파싱
+    val end = dateFormat.parse(endDate) ?: Date()           // 종료 날짜 파싱
     val calendar = Calendar.getInstance().apply { time = start }
 
+    // 지정된 기간 동안의 날짜 목록과 각 날짜에 대한 키를 리스트에 저장
     val keys: MutableList<Pair<String, Preferences.Key<Int>>> = mutableListOf()
     while (!calendar.time.after(end)) {
         val dateStr = dateFormat.format(calendar.time)
@@ -27,6 +31,7 @@ fun getWeeklyUsageFlow(context: Context, profileId: String, startDate: String, e
         calendar.add(Calendar.DATE, 1)
     }
 
+    // DataStore에서 해당 키들의 값을 읽고, 날짜별 Map으로 반환
     return context.dataStore.data.map { preferences ->
         keys.associate { (dateStr, key) ->
             dateStr to (preferences[key] ?: 0)

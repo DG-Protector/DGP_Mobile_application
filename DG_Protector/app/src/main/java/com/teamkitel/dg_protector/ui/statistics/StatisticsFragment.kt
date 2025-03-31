@@ -47,7 +47,7 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
         if (currentProfileId.isNotEmpty()) {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 getWeeklyUsageFlow(requireContext(), currentProfileId, startDate, endDate).collect { weeklyUsage ->
-                    // weeklyUsage: Map<String, Int> (key: "yyyy-MM-dd", value: 사용한 초)
+                    // weeklyUsage: Map<String, Int> (key: "yyyy-MM-dd", value: 사용한 시간)
                     // 기존처럼 텍스트뷰에 주간 사용 데이터를 출력
                     val usageText = weeklyUsage.entries.joinToString("\n") { entry ->
                         val seconds = entry.value ?: 0
@@ -122,7 +122,7 @@ class StatisticsFragment : Fragment(R.layout.layout_statistics) {
     }
 }
 
-// 1. 데이터셋에 사용할 시간 포맷터:
+// 데이터셋에 사용할 시간 포맷터
 class TimeValueFormatter : ValueFormatter() {
     override fun getFormattedValue(value: Float): String {
         val totalSeconds = value.toInt()
@@ -134,7 +134,6 @@ class TimeValueFormatter : ValueFormatter() {
         if (hours > 0) {
             sb.append("${hours}h")
         }
-        // 시간 부분이 있으면 분이 0이어도 표시
         if (hours > 0 || minutes > 0) {
             if (sb.isNotEmpty()) sb.append(" ")
             sb.append("${minutes}m")
@@ -147,7 +146,7 @@ class TimeValueFormatter : ValueFormatter() {
     }
 }
 
-// 2. y축에 사용할 포맷터 (0은 빈 문자열 처리하여 1h부터 표시)
+// y축에 사용할 포맷터 (0은 빈 문자열 처리하여 1h부터 표시)
 class HourAxisValueFormatter : ValueFormatter() {
     override fun getFormattedValue(value: Float): String {
         // 3600초 미만은 빈 문자열로 처리 (즉, 0h는 표시하지 않음)

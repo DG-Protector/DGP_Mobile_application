@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- 상단 로고 -->
         <ImageView
             android:id="@+id/logo_image_view5"
             android:layout_width="78dp"
@@ -24,7 +23,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 헤더 모드 버튼 -->
         <LinearLayout
             android:id="@+id/header_buttons"
             android:layout_width="wrap_content"
@@ -54,7 +52,6 @@
                 android:textColor="@android:color/black" />
         </LinearLayout>
 
-        <!-- 프로필 카드 목록 및 선택된 프로필 정보 영역 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_profiles"
             android:layout_width="0dp"
@@ -71,7 +68,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/btn_profile_create">
 
-            <!-- 계정 선택 안내 메시지 -->
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="0dp"
@@ -87,7 +83,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- 선택된 프로필 정보가 표시될 컨테이너 -->
             <FrameLayout
                 android:id="@+id/containerSelectedProfile"
                 android:layout_width="match_parent"
@@ -109,7 +104,6 @@
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- 하단 사용자 추가 버튼 -->
         <android.widget.Button
             android:id="@+id/btn_profile_create"
             android:layout_width="match_parent"

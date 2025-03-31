@@ -69,7 +69,7 @@ class CreateProfileActivity : AppCompatActivity() {
             setResult(RESULT_OK, resultIntent)
             finish()
         }
-        // 뒤로 가기 버튼 클릭 시 액티비티 종료함
+        // 뒤로 가기 버튼 클릭 시 액티비티 종료
         binding.btnBack.setOnClickListener { finish() }
     }
 

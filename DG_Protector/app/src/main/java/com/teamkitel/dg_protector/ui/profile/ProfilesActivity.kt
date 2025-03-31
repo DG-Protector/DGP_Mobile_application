@@ -12,8 +12,10 @@ import com.google.gson.reflect.TypeToken
 import com.teamkitel.dg_protector.R
 import com.teamkitel.dg_protector.databinding.LayoutProfilesBinding
 
+// 프로필 목록을 표시하고 선택, 수정, 삭제 기능을 제공
 class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClickListener {
 
+    // View binding 관련 변수
     private var _binding: LayoutProfilesBinding? = null
     private val binding get() = _binding!!
 
@@ -25,6 +27,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
     private lateinit var adapter: ProfilesAdapter
     private var mode: String = "select"
 
+    // 액티비티 초기화, 레이아웃 및 RecyclerView 설정, 버튼 리스너 등록
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,6 +42,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
 
         loadProfiles()
 
+        // 프로필 생성 버튼 클릭 시 모드에 따라 프로필 생성 또는 모드 초기화
         binding.btnProfileCreate.setOnClickListener {
             if (mode == "select") {
                 val intent = Intent(this, CreateProfileActivity::class.java)
@@ -52,6 +56,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
             }
         }
 
+        // 모드 전환 버튼: 수정, 삭제 모드로 전환
         binding.btnModeEdit.setOnClickListener {
             mode = "edit"
             binding.userName.text = "수정할 계정을 선택해주세요."
@@ -69,9 +74,10 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
         binding.userName.text = "계정을 선택해주세요."
     }
 
+    // 리스트 항목 클릭 시 모드에 따라 행동 (선택, 수정, 삭제)
     override fun onProfileItemClick(position: Int, profile: ProfileData) {
         when (mode) {
-            "edit" -> {
+            "edit" -> {     // 수정 모드: 수정 확인 다이얼로그 후 수정 액티비티 호출
                 AlertDialog.Builder(this)
                     .setTitle("프로필 수정")
                     .setMessage("프로필을 수정하시겠습니까?")
@@ -90,7 +96,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
                     .setNegativeButton("취소", null)
                     .show()
             }
-            "delete" -> {
+            "delete" -> {       // 삭제 모드: 삭제 확인 다이얼로그 후 프로필 삭제 및 저장
                 AlertDialog.Builder(this)
                     .setTitle("프로필 삭제")
                     .setMessage("프로필을 삭제하시겠습니까?")
@@ -106,7 +112,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
                         val current = ProfileManager.currentProfile
                         if (current != null && current.id == deletedProfile.id) {
                             if (profilesList.isNotEmpty()) {
-                                // 목록에 남은 첫 번째 프로필로 업데이트 (원하는 동작에 따라 수정)
+                                // 목록에 남은 첫 번째 프로필로 업데이트
                                 ProfileManager.updateCurrentProfile(profilesList.first(), this)
                             } else {
                                 ProfileManager.clearCurrentProfile(this)
@@ -134,6 +140,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
         }
     }
 
+    // 프로필 생성/수정 결과를 받고 리스트 업데이트
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_CREATE_PROFILE && resultCode == RESULT_OK) {
@@ -144,7 +151,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
             val profileWeight = data?.getStringExtra("profileWeight") ?: "Unknown"
             val editPosition = data?.getIntExtra("editPosition", -1) ?: -1
 
-            if (editPosition >= 0) {
+            if (editPosition >= 0) {    // 수정: 기존 프로필 업데이트
                 val oldProfile = profilesList[editPosition]
                 val updatedProfile = ProfileData(
                     id = oldProfile.id,
@@ -159,7 +166,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
                 profilesList[editPosition] = updatedProfile
                 adapter.notifyItemChanged(editPosition)
                 Toast.makeText(this, "프로필이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-            } else {
+            } else {    // 추가: 새 프로필 생성
                 val newProfile = ProfileData(
                     name = profileName,
                     age = profileAge,
@@ -171,13 +178,14 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
                 adapter.notifyItemInserted(profilesList.size - 1)
                 Toast.makeText(this, "새 프로필이 추가되었습니다.", Toast.LENGTH_SHORT).show()
             }
-            mode = "select"
+            mode = "select"     // 모드를 기본(select)으로 복구 및 저장
             binding.userName.text = "계정을 선택해주세요."
             binding.btnProfileCreate.text = "사용자 추가"
             saveProfiles()
         }
     }
 
+    // 프로필 목록을 SharedPreferences에 저장
     private fun saveProfiles() {
         val prefs = getSharedPreferences("profiles", MODE_PRIVATE)
         val gson = Gson()
@@ -185,6 +193,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
         prefs.edit().putString("profilesList", json).apply()
     }
 
+    // SharedPreferences에서 프로필 목록을 불러옴
     private fun loadProfiles() {
         val prefs = getSharedPreferences("profiles", MODE_PRIVATE)
         val gson = Gson()
@@ -198,6 +207,7 @@ class ProfilesActivity : AppCompatActivity(), ProfilesAdapter.OnProfileItemClick
         }
     }
 
+    // 액티비티 종료 시 ViewBinding 해제
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

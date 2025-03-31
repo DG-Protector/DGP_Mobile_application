@@ -33,8 +33,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/default_white" />
 
-    <!-- 모드 선택 영역 -->
-
     <ImageButton
         android:id="@+id/btn_buzzer"
         android:layout_width="60dp"
@@ -97,7 +95,6 @@
             android:gravity="center" />
     </LinearLayout>
 
-    <!-- Controller 영역: NumberPicker 영역과 오버레이를 포함하는 ConstraintLayout 컨테이너 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/controller_container"
         android:layout_width="0dp"
@@ -108,7 +105,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- 기존 NumberPicker 영역 -->
         <LinearLayout
             android:id="@+id/layout_controller"
             android:layout_width="0dp"
@@ -118,7 +114,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
-            <!-- 좌측 NumberPicker 영역 -->
+
             <LinearLayout
                 android:id="@+id/layout_left_shoulder"
                 android:layout_width="0dp"
@@ -152,7 +148,7 @@
                     android:selectionDividerHeight="0dp"
                     android:theme="@style/numberPickerCustom" />
             </LinearLayout>
-            <!-- 우측 NumberPicker 영역 -->
+
             <LinearLayout
                 android:id="@+id/layout_right_shoulder"
                 android:layout_width="0dp"
@@ -192,7 +188,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 오버레이: 약, 중, 강 모드 시 controller 영역 위에 덮음 -->
         <View
             android:id="@+id/overlay_auto_mode"
             android:layout_width="0dp"
@@ -206,8 +201,6 @@
             android:background="@drawable/rounded_overlay"
             android:visibility="gone" />
 
-
-        <!-- 자동 모드 텍스트: 중앙 배치 -->
         <TextView
             android:id="@+id/tv_auto_mode"
             android:layout_width="wrap_content"
@@ -223,7 +216,6 @@
             app:layout_constraintTop_toTopOf="@id/layout_controller" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 동기화 버튼 -->
     <LinearLayout
         android:id="@+id/layout_sync_btn"
         android:layout_width="0dp"
@@ -268,7 +260,6 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <!-- 선택된 프로필 정보를 표시하는 영역 -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -288,7 +279,6 @@
             android:textSize="40sp"
             android:textStyle="bold" />
 
-        <!-- 예시: MainFragment의 상단 로고 아래에 타이머를 표시 -->
         <TextView
             android:id="@+id/timerTextView"
             android:layout_width="match_parent"

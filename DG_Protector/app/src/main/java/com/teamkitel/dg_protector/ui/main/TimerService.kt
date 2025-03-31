@@ -37,7 +37,7 @@ class TimerService : Service() {
         }
     }
 
-    // 타이머 Runnable: 매 초마다 프로필 데이터를 업데이트하고, 사용 시간을 저장함.
+    // 매 초마다 프로필 데이터를 업데이트하고 사용 시간을 저장함.
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (isRunning) {
@@ -50,7 +50,7 @@ class TimerService : Service() {
                     profile.lastUsedTimestamp = System.currentTimeMillis()
                     prefs.edit().putString("selectedProfileJson", gson.toJson(profile)).apply()
 
-                    // 타이머 값 업데이트: DataStore를 사용해 오늘 날짜의 사용 시간을 1초 추가
+                    // DataStore를 사용해 오늘 날짜의 사용 시간을 1초 추가
                     val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                     CoroutineScope(Dispatchers.IO).launch {
                         addUsageTime(applicationContext, profile.id, today, 1)
@@ -78,6 +78,7 @@ class TimerService : Service() {
         registerReceiver(bluetoothStateReceiver, filter)
     }
 
+    // 서비스가 시작될 때 호출되며, 타이머를 동작
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!isRunning) {
             isRunning = true
@@ -87,6 +88,7 @@ class TimerService : Service() {
         return START_STICKY
     }
 
+    // 서비스가 종료될 때, 타이머 작업 중지 및 리시버 등록 해제
     override fun onDestroy() {
         super.onDestroy()
         isRunning = false

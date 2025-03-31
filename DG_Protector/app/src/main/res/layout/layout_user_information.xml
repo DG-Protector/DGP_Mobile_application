@@ -7,7 +7,6 @@
     android:background="@android:color/white"
     tools:context=".ui.user_information.UserInformationFragment">
 
-    <!-- 상단 로고 -->
     <ImageView
         android:id="@+id/logo_image_view4"
         android:layout_width="78dp"
@@ -18,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 프로필 설정 버튼 -->
     <ImageButton
         android:id="@+id/btn_profile_setting2"
         android:layout_width="60dp"
@@ -33,7 +31,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/kitel_navy_700" />
 
-    <!-- ScrollView 내의 전체 콘텐츠 배치 -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
@@ -49,7 +46,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 프로필 카드 영역 (기존 코드 유지) -->
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
@@ -99,7 +95,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 오늘 누적 사용시간과 게이지, 격려 메시지 영역 -->
             <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
@@ -112,7 +107,6 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- 오늘 사용시간 텍스트 -->
                 <TextView
                     android:id="@+id/todayUsageTextView"
                     android:layout_width="match_parent"
@@ -123,7 +117,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <!-- 게이지: MilestoneProgressBar 사용 (목표: 1시간 30분 = 5400초; 테스트 시 max 조정 가능) -->
                 <com.teamkitel.dg_protector.ui.user_information.MilestoneProgressBar
                     android:id="@+id/usageProgressBar"
                     style="?android:attr/progressBarStyleHorizontal"
@@ -133,7 +126,6 @@
                     android:max="5400"
                     android:progress="0" />
 
-                <!-- 격려 메시지 텍스트 -->
                 <TextView
                     android:id="@+id/encouragementTextView"
                     android:layout_width="match_parent"
@@ -185,7 +177,6 @@
                     android:alignmentMode="alignMargins"
                     android:padding="8dp">
 
-                    <!-- 첫 번째 카드 -->
                     <LinearLayout
                         android:id="@+id/card_stretch_1"
                         android:layout_width="0dp"
@@ -221,7 +212,6 @@
                             android:focusable="true" />
                     </LinearLayout>
 
-                    <!-- 두 번째 카드 -->
                     <LinearLayout
                         android:id="@+id/card_stretch_2"
                         android:layout_width="0dp"
@@ -257,7 +247,6 @@
                             android:focusable="true" />
                     </LinearLayout>
 
-                    <!-- 세 번째 카드 -->
                     <LinearLayout
                         android:id="@+id/card_stretch_3"
                         android:layout_width="0dp"
@@ -293,7 +282,6 @@
                             android:focusable="true" />
                     </LinearLayout>
 
-                    <!-- 네 번째 카드 -->
                     <LinearLayout
                         android:id="@+id/card_stretch_4"
                         android:layout_width="0dp"
