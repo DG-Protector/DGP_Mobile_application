@@ -3,17 +3,27 @@
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 
-contribution by softyware21<br/>last updateed at '25.03.31
+contribution by softyware21
+
+last updateed at '25.03.31
+
+
 
 ## Structure
 
-Main
-
-Statistics
-
-User_Information
+### Main
+https://github.com/user-attachments/assets/848cbd5f-5f7b-4d32-8255-96fa9e32b35c
 
 
+### Statistics
+
+
+
+### User_Information
+
+
+
+#### 
 
 
 25.03.25.v1 | first file upload
