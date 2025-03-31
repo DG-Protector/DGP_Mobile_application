@@ -17,12 +17,14 @@ last updateed at '25.03.31
 </p>
 
 ### Statistics
-
-
+<p align="center">
+<img src="https://github.com/user-attachments/assets/b2bfe39b-5665-4a16-a3f5-a64164cb23f0">
+</p>
 
 ### User_Information
-
-
+<p align="center">
+<img src="https://github.com/user-attachments/assets/a7ac1015-5a35-45e1-8b3a-dda9bb08dc7f">
+</p>
 
 #### 
 
